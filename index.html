@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>6. Turnir Polanica 2026 – Satnica</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0e0b;
+      --bg2:       #111614;
+      --surface:   rgba(255,255,255,.055);
+      --surface2:  rgba(255,255,255,.08);
+      --border:    rgba(255,255,255,.1);
+      --border2:   rgba(255,255,255,.16);
+      --green:     #22c55e;
+      --green-dim: #16a34a;
+      --green-glow:rgba(34,197,94,.18);
+      --gold:      #f59e0b;
+      --gold-dim:  #d97706;
+      --red:       #ef4444;
+      --red-glow:  rgba(239,68,68,.18);
+      --white:     #ffffff;
+      --text:      #f0fdf4;
+      --muted:     rgba(240,253,244,.45);
+      --muted2:    rgba(240,253,244,.25);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NOISE TEXTURE overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: .4;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── BACKGROUND GLOW ── */
+    .bg-glow {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-glow-1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(34,197,94,.12) 0%, transparent 70%);
+      top: -200px; left: -100px;
+    }
+    .bg-glow-2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(239,68,68,.08) 0%, transparent 70%);
+      bottom: 100px; right: -100px;
+    }
+
+    /* ── WRAP ── */
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 16px 80px;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 56px 0 40px;
+      position: relative;
+    }
+
+    .header-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 5px 14px 5px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 20px;
+    }
+    .header-chip::before {
+      content: '';
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .5; transform: scale(.8); }
+    }
+
+    h1 {
+      font-size: clamp(42px, 10vw, 72px);
+      font-weight: 900;
+      line-height: .95;
+      letter-spacing: -.03em;
+      margin-bottom: 6px;
+    }
+
+    h1 .line2 {
+      display: block;
+      background: linear-gradient(135deg, var(--green) 0%, #86efac 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-meta {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .meta-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .meta-pill svg { width: 14px; height: 14px; opacity: .7; }
+
+    /* ── DRAW BADGE ── */
+    .draw-badge {
+      margin: 0 0 36px;
+      background: linear-gradient(135deg, rgba(245,158,11,.15), rgba(245,158,11,.05));
+      border: 1px solid rgba(245,158,11,.3);
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .draw-icon {
+      width: 40px; height: 40px;
+      background: rgba(245,158,11,.15);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .draw-text-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2px;
+    }
+    .draw-text-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--white);
+    }
+
+    /* ── SECTION ── */
+    .section { margin-bottom: 12px; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin-bottom: 10px;
+      padding-left: 2px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: border-color .2s;
+    }
+    .card:hover { border-color: var(--border2); }
+
+    .card-head {
+      padding: 16px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-head-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+    }
+
+    .card-head-badge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: var(--surface2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .card-head-badge.green {
+      background: rgba(34,197,94,.12);
+      color: var(--green);
+      border-color: rgba(34,197,94,.25);
+    }
+    .card-head-badge.gold {
+      background: rgba(245,158,11,.12);
+      color: var(--gold);
+      border-color: rgba(245,158,11,.25);
+    }
+    .card-head-badge.red {
+      background: rgba(239,68,68,.12);
+      color: var(--red);
+      border-color: rgba(239,68,68,.25);
+    }
+
+    /* ── MATCH ROW ── */
+    .match {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0;
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+      cursor: default;
+    }
+    .match:last-child { border-bottom: none; }
+    .match:hover { background: var(--surface2); }
+
+    .match-time {
+      width: 76px;
+      flex-shrink: 0;
+      padding: 16px 0;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .match-time-num {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--white);
+      line-height: 1;
+    }
+    .match-time-h {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted2);
+      letter-spacing: .1em;
+      margin-top: 2px;
+    }
+
+    .match-body {
+      flex: 1;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .match-teams-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+    }
+
+    .team { color: var(--white); }
+    .team.a { color: var(--green); }
+    .team.b { color: #60a5fa; }
+
+    .vs-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      color: var(--muted2);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 6px;
+    }
+
+    .match-duration {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted2);
+      white-space: nowrap;
+    }
+
+    /* GROUPS two-col */
+    .groups-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .group-col {
+      min-width: 0;
+    }
+    .group-col + .group-col {
+      border-left: 1px solid var(--border);
+    }
+    .group-tag {
+      padding: 10px 16px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted2);
+    }
+    .group-col .match-time { width: 62px; }
+    .group-col .match-teams-row { font-size: 15px; }
+    .group-col .match-body { padding: 12px 14px; }
+    .group-col .match-duration { display: none; }
+
+    /* ── KNOCKOUT SPECIALS ── */
+    .match.semifinal .match-teams-row { font-size: 17px; }
+
+    .match.bronze .match-time-num { color: #cd7f32; }
+    .match.bronze { background: rgba(205,127,50,.04); }
+
+    .match.final {
+      background: rgba(239,68,68,.05);
+    }
+    .match.final:hover { background: rgba(239,68,68,.09); }
+    .match.final .match-time-num { color: var(--red); font-size: 20px; }
+    .match.final .match-teams-row { font-size: 19px; font-weight: 800; }
+
+    /* glow line left for finale */
+    .match.final {
+      position: relative;
+    }
+    .match.final::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--red);
+      box-shadow: 0 0 12px var(--red);
+    }
+
+    /* ── TIMELINE LINE ── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+      padding-left: 20px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px; top: 12px; bottom: 12px;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--green-dim), rgba(34,197,94,.05));
+    }
+
+    .tl-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 2px 0;
+    }
+
+    .tl-dot {
+      width: 15px; height: 15px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: 2px solid var(--green-dim);
+      margin-top: 1px;
+      position: relative;
+      z-index: 1;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .tl-item:hover .tl-dot {
+      border-color: var(--green);
+      box-shadow: 0 0 8px var(--green-glow);
+    }
+    .tl-dot.gold-dot { border-color: var(--gold-dim); }
+    .tl-item:hover .tl-dot.gold-dot { border-color: var(--gold); box-shadow: 0 0 8px rgba(245,158,11,.3); }
+    .tl-dot.red-dot { border-color: var(--red); box-shadow: 0 0 10px var(--red-glow); }
+
+    .tl-content {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 4px;
+      transition: border-color .2s;
+    }
+    .tl-item:hover .tl-content { border-color: var(--border2); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding-top: 24px;
+      font-size: 12px;
+      color: var(--muted2);
+      letter-spacing: .04em;
+    }
+
+    /* ── FADE IN ANIMATION ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp .5s ease forwards;
+    }
+    .fade-up:nth-child(1) { animation-delay: .05s; }
+    .fade-up:nth-child(2) { animation-delay: .12s; }
+    .fade-up:nth-child(3) { animation-delay: .19s; }
+    .fade-up:nth-child(4) { animation-delay: .26s; }
+    .fade-up:nth-child(5) { animation-delay: .33s; }
+    .fade-up:nth-child(6) { animation-delay: .40s; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 500px) {
+      header { padding: 36px 0 28px; }
+      .groups-wrap { grid-template-columns: 1fr; }
+      .group-col + .group-col { border-left: none; border-top: 1px solid var(--border); }
+      .match.final .match-teams-row { font-size: 16px; }
+      .match-teams-row { font-size: 15px; }
+      .match-duration { display: none; }
+      .draw-badge { padding: 14px 16px; }
+      h1 { letter-spacing: -.025em; }
+      .timeline { padding-left: 16px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fade-up { animation: none; opacity: 1; }
+      .header-chip::before { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-chip">Mali nogomet · Polanica</div>
+    <h1>
+      6. Turnir
+      <span class="line2">Polanica 2026.</span>
+    </h1>
+    <div class="header-meta">
+      <div class="meta-pill">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 7h12M6 3V1M10 3V1"/></svg>
+        Subota, 27. lipnja 2026.
+      </div>
+      <div class="meta-pill">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5l2 1.5"/></svg>
+        13:30 – ~22:00 h
+      </div>
+    </div>
+  </header>
+
+  <!-- IZVLAČENJE -->
+  <div class="draw-badge fade-up">
+    <div class="draw-icon">🎲</div>
+    <div>
+      <div class="draw-text-label">Izvlačenje parova</div>
+      <div class="draw-text-value">13:30 h</div>
+    </div>
+  </div>
+
+  <!-- SKUPINSKA FAZA -->
+  <div class="section fade-up">
+    <div class="section-label">Skupinska faza · 2 × 12 min</div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-title">Razigravanje po skupinama</div>
+        <div class="card-head-badge green">2 skupine · 3 ekipe</div>
+      </div>
+      <div class="groups-wrap">
+        <!-- SKUPINA A -->
+        <div class="group-col">
+          <div class="group-tag">Skupina A</div>
+          <div class="match">
+            <div class="match-time"><div class="match-time-num">14:00</div><div class="match-time-h">h</div></div>
+            <div class="match-body">
+              <div class="match-teams-row">
+                <span class="team a">A1</span>
+                <span class="vs-badge">VS</span>
+                <span class="team a">A2</span>
+              </div>
+            </div>
+          </div>
+          <div class="match">
+            <div class="match-time"><div class="match-time-num">15:20</div><div class="match-time-h">h</div></div>
+            <div class="match-body">
+              <div class="match-teams-row">
+                <span class="team a">A1</span>
+                <span class="vs-badge">VS</span>
+                <span class="team a">A3</span>
+              </div>
+            </div>
+          </div>
+          <div class="match">
+            <div class="match-time"><div class="match-time-num">16:40</div><div class="match-time-h">h</div></div>
+            <div class="match-body">
+              <div class="match-teams-row">
+                <span class="team a">A2</span>
+                <span class="vs-badge">VS</span>
+                <span class="team a">A3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SKUPINA B -->
+        <div class="group-col">
+          <div class="group-tag">Skupina B</div>
+          <div class="match">
+            <div class="match-time"><div class="match-time-num">14:40</div><div class="match-time-h">h</div></div>
+            <div class="match-body">
+              <div class="match-teams-row">
+                <span class="team b">B1</span>
+                <span class="vs-badge">VS</span>
+                <span class="team b">B2</span>
+              </div>
+            </div>
+          </div>
+          <div class="match">
+            <div class="match-time"><div class="match-time-num">16:00</div><div class="match-time-h">h</div></div>
+            <div class="match-body">
+              <div class="match-teams-row">
+                <span class="team b">B1</span>
+                <span class="vs-badge">VS</span>
+                <span class="team b">B3</span>
+              </div>
+            </div>
+          </div>
+          <div class="match">
+            <div class="match-time"><div class="match-time-num">17:20</div><div class="match-time-h">h</div></div>
+            <div class="match-body">
+              <div class="match-teams-row">
+                <span class="team b">B2</span>
+                <span class="vs-badge">VS</span>
+                <span class="team b">B3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZAVRŠNICA TIMELINE -->
+  <div class="section">
+    <div class="section-label fade-up">Završnica · 2 × 15 min</div>
+
+    <div class="timeline">
+
+      <!-- POLUFINALE 1 -->
+      <div class="tl-item fade-up">
+        <div class="tl-dot gold-dot"></div>
+        <div class="tl-content">
+          <div class="card-head" style="background:rgba(245,158,11,.07);border-bottom:1px solid rgba(245,158,11,.15)">
+            <div class="card-head-title">1. Polufinale</div>
+            <div class="card-head-badge gold">2 × 15 min</div>
+          </div>
+          <div class="match semifinal">
+            <div class="match-time"><div class="match-time-num">18:30</div><div class="match-time-h">h</div></div>
+            <div class="match-body">
+              <div class="match-teams-row">
+                <span class="team a">1A</span>
+                <span class="vs-badge">VS</span>
+                <span class="team b">2B</span>
+              </div>
+              <div class="match-duration">Pobjednik → Finale</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- POLUFINALE 2 -->
+      <div class="tl-item fade-up">
+        <div class="tl-dot gold-dot"></div>
+        <div class="tl-content">
+          <div class="card-head" style="background:rgba(245,158,11,.07);border-bottom:1px solid rgba(245,158,11,.15)">
+            <div class="card-head-title">2. Polufinale</div>
+            <div class="card-head-badge gold">2 × 15 min</div>
+          </div>
+          <div class="match semifinal">
+            <div class="match-time"><div class="match-time-num">19:20</div><div class="match-time-h">h</div></div>
+            <div class="match-body">
+              <div class="match-teams-row">
+                <span class="team b">2A</span>
+                <span class="vs-badge">VS</span>
+                <span class="team a">1B</span>
+              </div>
+              <div class="match-duration">Pobjednik → Finale</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. MJESTO -->
+      <div class="tl-item fade-up">
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="card-head" style="background:rgba(205,127,50,.07);border-bottom:1px solid rgba(205,127,50,.15)">
+            <div class="card-head-title">🥉 Utakmica za 3. mjesto</div>
+            <div class="card-head-badge">2 × 15 min</div>
+          </div>
+          <div class="match bronze">
+            <div class="match-time"><div class="match-time-num">20:10</div><div class="match-time-h">h</div></div>
+            <div class="match-body">
+              <div class="match-teams-row">
+                <span class="team" style="color:#cd7f32">Poraženi PF1</span>
+                <span class="vs-badge">VS</span>
+                <span class="team" style="color:#cd7f32">Poraženi PF2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINALE -->
+      <div class="tl-item fade-up">
+        <div class="tl-dot red-dot"></div>
+        <div class="tl-content">
+          <div class="card-head" style="background:rgba(239,68,68,.1);border-bottom:1px solid rgba(239,68,68,.2)">
+            <div class="card-head-title">🏆 Finale</div>
+            <div class="card-head-badge red">2 × 15 min</div>
+          </div>
+          <div class="match final">
+            <div class="match-time"><div class="match-time-num">21:00</div><div class="match-time-h">h</div></div>
+            <div class="match-body">
+              <div class="match-teams-row">
+                <span class="team" style="color:var(--red)">Pobjednici PF1</span>
+                <span class="vs-badge" style="border-color:rgba(239,68,68,.3);color:var(--red)">VS</span>
+                <span class="team" style="color:var(--red)">Pobjednici PF2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    6. Turnir Polanica 2026. &nbsp;·&nbsp; Satnica 27. 6. 2026.
+  </footer>
+
+</div>
+</body>
+</html>
